@@ -66,15 +66,15 @@
             <p class="text-center text-uppercase fw-bold">Club VIP Donkeys</p>
             <hr class="separator">
             <img src="image/logo.jpg" alt="Donkeys Mexicano Fusión">
-            <EditForm Model="contact" OnValidSubmit="OnValidSubmit">
+            <EditForm Model="memberAccount" OnValidSubmit="OnValidSubmit">
                 <div  class="d-flex align-content-between">
                     <div class="m-1 flex-fill">
                         <label for="firstName" class="form-label">Nombre</label>
-                        <input type="text" @bind-value="contact.FirstName" class="form-control" id="firstName" placeholder="Nombre">
+                        <input type="text" @bind-value="memberAccount.Contact.FirstName" class="form-control" id="firstName" placeholder="Nombre">
                     </div>
                     <div class="m-1 flex-fill">
                         <label for="lastName" class="form-label">Apellido</label>
-                        <input type="text" @bind-value="contact.LastName" class="form-control" id="lastName" placeholder="Apellido">
+                        <input type="text" @bind-value="memberAccount.Contact.LastName" class="form-control" id="lastName" placeholder="Apellido">
                     </div>
                 </div>
                 <div class="mb-3">
@@ -87,26 +87,26 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Numero de Documento</label>
-                    <input type="text" @bind-value="contact.Id" class="form-control" id="cardNumber" placeholder="00000000-0">
+                    <input type="text" @bind-value="memberAccount.Contact.Id" class="form-control" id="cardNumber" placeholder="00000000-0">
                 </div>
                 <div class="mb-3">
                     <label for="email"class="form-label">Correo</label>
-                    <input type="email" @bind-value="contact.Email" class="form-control" id="email" placeholder="Correo">
+                    <input type="email" @bind-value="memberAccount.Contact.Email" class="form-control" id="email" placeholder="Correo">
                 </div>
                 <div class="mb-3">
                     <label for="phone"  class="form-label">Telefono</label>
-                    <input type="tel" @bind-value="contact.Addresses[0].CellPhoneNumber " class="form-control" id="phone" placeholder="Telefono">
+                    <input type="tel" @bind-value="memberAccount.Contact.Addresses[0].CellPhoneNumber " class="form-control" id="phone" placeholder="Telefono">
                 </div>
                 <div class="mb-3">
                     <label for="sex" class="form-label">Sexo</label>
-                    <select @bind="contact.Gender"  class="form-select" id="sex">
+                    <select @bind="memberAccount.Contact.Gender" class="form-select" id="sex">
                         <option value="1">Masculino</option>
                         <option value="2">Femenino</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="municipio" class="form-label">municipio:</label>
-                    <input @bind-value="contact.Addresses[0].City" class="form-control" list="datalistoptions" id="exampledatalist" placeholder="type to search...">
+                    <input @bind-value="memberAccount.Contact.Addresses[0].City" class="form-control" list="datalistoptions" id="exampledatalist" placeholder="type to search...">
                     <datalist id="datalistoptions">
                         <option value="">selecciona un municipio</option>
                         <!-- municipios de ahuachapán -->
@@ -429,40 +429,43 @@
 
 @code {
     private bool showLeaveAlert = false;
-    private Contact contact = new Contact
+    private MemberAccount memberAccount = new MemberAccount
         {
-            Addresses = new List<Address>
-    {
-        new Address { Address1 = "", PhoneNumber = "", Country = "", PostCode = "", StateProvinceRegion = "", Type = "0" },
-
-    },
-            MiddleName = "",
-            Name = "",
-            Account = new Account
+            Contact = new Contact
             {
-                Scheme = new Scheme
+                Addresses = new List<Address>
+            {
+                new Address { Address1 = "", PhoneNumber = "", Country = "SV", PostCode = "", StateProvinceRegion = "", Type = "0" }
+            },
+                MiddleName = "",
+                Name = "",
+                Account = new Account
                 {
-                    Id = "DONKEYS",
-                    Club = new Club
+                    Scheme = new Scheme
                     {
-                        Id = "DONKEYS"
+                        Id = "DONKEYS",
+                        Club = new Club
+                        {
+                            Id = "DONKEYS"
+                        }
                     }
                 }
             }
-
         };
 
     private async Task OnValidSubmit(EditContext context)
     {
-        contact.Account.Id = contact.Id;
-        contact.UserName = contact.Email;
-        contact.Password = contact.Email;
-        await save();
+        // Asignar el ID del Contact al ID del Account
+        memberAccount.Contact.Account.Id = memberAccount.Contact.Id;
+        memberAccount.Contact.UserName = memberAccount.Contact.Email;
+        memberAccount.Contact.Password = memberAccount.Contact.Email;
+
+        await Save();
     }
 
-    private async Task save()
+    private async Task Save()
     {
-        var httpResponse = await Http.PostAsJsonAsync<Contact>("ContactCreate", contact);
+        var httpResponse = await Http.PostAsJsonAsync<MemberAccount>("/ContactCreate", memberAccount);
 
         if (!(httpResponse.StatusCode == System.Net.HttpStatusCode.OK))
         {
@@ -479,3 +482,4 @@
         showLeaveAlert = false;
     }
 }
+

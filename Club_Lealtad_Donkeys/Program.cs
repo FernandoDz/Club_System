@@ -1,4 +1,5 @@
 using Club_Lealtad_Donkeys;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -9,6 +10,5 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddMudServices();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://201.247.100.129/CommerceService/UCJson.svc/") });
-
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:3000/api") });
 await builder.Build().RunAsync();
